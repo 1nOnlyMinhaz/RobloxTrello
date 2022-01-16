@@ -867,4 +867,23 @@ module.DeleteCard = function(id)
 	end
 end
 
+module.GetCardField = function(id,field)
+	if id == nil then
+		return warn("Unable to get card field: Card ID is nil or is not provided.")
+	end
+	if field == nil then
+		return warn("Unable to get card field: Field is nil or is not provided.")
+	end
+	local success,err = pcall(function()
+		local response = HttpService:RequestAsync({
+			Url = module.endpoint.."/cards/"..id.."/"..field.."?key="..module.key.."&token="..module.token,
+			Method = "GET"
+		})
+		return HttpService:JSONDecode(response)
+	end)
+	if err then
+		return warn("Unexpected error whilst deleting card: "..err)
+	end
+end
+
 return module
