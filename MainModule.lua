@@ -3,13 +3,13 @@
 	Trello API Module in lua, made by minhaz1234567
 	Link to Trello API: https://developer.atlassian.com/cloud/trello/rest/api-group-actions/
 	The parameters in the functions are in the order listed on the docs.
-	This is not finished yet.
+	This is not finished yet, report bugs if you find any.
 	Made for upBase LLC.
-
+	
 ]]
 
 local module = {}
-local HttpService = require("HttpService")
+local HttpService = game:GetService("HttpService")
 
 module.key = 'YOURKEYGOESHERE'
 
@@ -26,13 +26,8 @@ module.GetBoardMemberships = function(id,filter,activity,orgMemberType,member,me
 	if id == nil then
 		return warn("Unable to get board memberships: Board ID is nil or is not provided.")
 	end
-	local success,err = pcall(function()
-		local response = HttpService:GetAsync(module.endpoint.."/boards/"..id.."/memberships?filter="..filter.."&activity="..activity.."&orgMemberType="..orgMemberType.."&member="..member.."&member_fields="..member_fields.."&key="..module.key.."&token="..module.token)
-		return HttpService:JSONDecode(response)	
-	end)
-	if err then
-		return warn("Unexpected error whilst trying to get board memberships: "..err)
-	end
+	local response = HttpService:GetAsync(module.endpoint.."/boards/"..id.."/memberships?filter="..filter.."&activity="..activity.."&orgMemberType="..orgMemberType.."&member="..member.."&member_fields="..member_fields.."&key="..module.key.."&token="..module.token)
+	return HttpService:JSONDecode(response)	
 end
 
 module.GetBoard = function(id,actions,boardStars,cards,card_pluginData,checklists,customFields,fields,labels,lists,members,memberships,pluginData,organization,organization_pluginData,myPrefs,tags)
@@ -55,13 +50,9 @@ module.GetBoard = function(id,actions,boardStars,cards,card_pluginData,checklist
 	if id == nil then
 		return warn("Unable to get board: Board ID is nil or is not provided.")
 	end
-	local success,err = pcall(function()
-		local response = HttpService:GetAsync(module.endpoint.."/boards/"..id.."?actions="..actions.."&boardStars="..boardStars.."&cards="..cards.."&cards_pluginData="..cards_pluginData.."&checklists="..checklists.."&customFields="..customFields.."&fields="..fields.."&labels="..labels.."&lists="..lists.."&members="..members.."&memberships="..memberships.."&pluginData="..pluginData.."&organization="..organization.."&organization_pluginData="..organization_pluginData.."&myPrefs="..myPrefs.."&tags="..tags.."&key="..module.key.."&token="..module.token)
-		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting board: "..err)
-	end
+	local response = HttpService:GetAsync(module.endpoint.."/boards/"..id.."?actions="..actions.."&boardStars="..boardStars.."&cards="..cards.."&cards_pluginData="..cards_pluginData.."&checklists="..checklists.."&customFields="..customFields.."&fields="..fields.."&labels="..labels.."&lists="..lists.."&members="..members.."&memberships="..memberships.."&pluginData="..pluginData.."&organization="..organization.."&organization_pluginData="..organization_pluginData.."&myPrefs="..myPrefs.."&tags="..tags.."&key="..module.key.."&token="..module.token)
+	return HttpService:JSONDecode(response)
+	
 end
 
 module.UpdateBoard = function(id,name,desc,closed,subscribed,idOrganization,permissionLevel,selfJoin,cardCovers,hideVotes,invitations,voting,comments,background,cardAging,calendarFeedEnabled,labelNames_green,labelNames_yellow,labelNames_orange,labelNames_red,labelNames_purple,labelNames_blue)
@@ -89,34 +80,25 @@ module.UpdateBoard = function(id,name,desc,closed,subscribed,idOrganization,perm
 	labelNames_red = labelNames_red or Board.labelNames.red
 	labelNames_purple = labelNames_purple or Board.labelNames.purple
 	labelNames_blue = labelNames_blue or Board.labelNames.blue
-	local success,err = pcall(function()
 		local requestMethod = "PUT"
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."?name="..name.."&desc="..desc.."&closed="..closed.."&subscribed="..subscribed.."&idOrganization="..idOrganization.."&prefs/permissionLevel="..permissionLevel.."&prefs/selfJoin="..selfJoin.."&prefs/cardCovers="..cardCovers.."&prefs/hideVotes="..hideVotes.."&prefs/invitations="..invitations.."&prefs/voting="..voting.."&prefs/comments="..comments.."&prefs/background="..background.."&prefs/cardAging="..cardAging.."&prefs/calendarFeedEnabled="..calendarFeedEnabled.."&labelNames/green="..labelNames_green.."&labelNames/yellow="..labelNames_yellow.."&labelNames/orange="..labelNames_orange.."&labelNames/red=" ..labelNames_red.."&labelNames/purple="..labelNames_purple.."&labelNames/blue="..labelNames_blue.."&key="..module.key.."&token="..module.token,
 			Method = requestMethod
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating board: "..err)
-	end
 end
 
 module.DeleteBoard = function(id)
 	if id == nil then
 		return warn("Unable to update board: Board ID is nil or is not provided.")
 	end
-	local success,err = pcall(function()
-		local requestMethod = "DELETE"
-		local response = HttpService:RequestAsync({
-			Url = module.endpoint.."/boards/"..id.."?key="..module.key.."&token="..module.token,
-			Method = requestMethod
-		})
-		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating board: "..err)
-	end
+	local requestMethod = "DELETE"
+	local response = HttpService:RequestAsync({
+		Url = module.endpoint.."/boards/"..id.."?key="..module.key.."&token="..module.token,
+		Method = requestMethod
+	})
+	return HttpService:JSONDecode(response)
+	
 end
 
 module.GetBoardField = function(id,field)
@@ -126,13 +108,8 @@ module.GetBoardField = function(id,field)
 	if field == nil then
 		return warn("Unable to get board field: Field is nil or is not provided.")
 	end
-	local success,err = pcall(function()
-		local response = HttpService:GetAsync(module.endpoint.."/boards/"..id.."/"..field.."?key="..module.key.."&token="..module.token)
-		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting board field: "..err)
-	end
+	local response = HttpService:GetAsync(module.endpoint.."/boards/"..id.."/"..field.."?key="..module.key.."&token="..module.token)
+	return HttpService:JSONDecode(response) 
 end
 
 module.GetBoardActions = function(id,filter)
@@ -160,13 +137,9 @@ module.GetCard = function(id,idCard)
 	if idCard == nil then
 		return warn("Unable to get card: Card ID(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:GetAsync(module.endpoint.."/boards/"..id.."/cards/"..idCard.."?key="..module.key.."&token="..module.token)
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting board field: "..err)
-	end
+	
 end
 
 module.GetBoardStars = function(boardId,filter)
@@ -174,27 +147,16 @@ module.GetBoardStars = function(boardId,filter)
 		return warn("Unable to get Board Stars: Board ID(1st param) is nil or is not provided.")
 	end
 	filter = filter or "mine"
-	local success,err = pcall(function()
 		local response = HttpService:GetAsync(module.endpoint.."/boards/"..boardId.."/boardStars?filter="..filter.."&key="..module.key.."&token="..module.token)
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting board stars: "..err)
-	end
-
 end
 
 module.GetBoardChecklists = function(id)
 	if id == nil then
 		return warn("Unable to get checklists: Board ID(1st param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:GetAsync(module.endpoint.."/boards/"..id.."/checklists".."?key="..module.key.."&token="..module.token)
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting board checklists: "..err)
-	end
 end
 
 module.CreateChecklist = function(id,name)
@@ -204,32 +166,23 @@ module.CreateChecklist = function(id,name)
 	if name == nil then
 		return warn("Unable to create checklist: Card ID(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/checklists?name="..name.."&key="..module.key.."&token="..module.token,
 			Method = "POST"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst creating checklist: "..err)
-	end
 end
 
 module.GetBoardCards = function(id)
 	if id == nil then
 		return warn("Unable to get cards: Board ID(1st param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/cards?key="..module.key.."&token="..module.token,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting cards: "..err)
-	end
+	
 end
 
 module.GetFilteredCards = function(id,filter)
@@ -239,16 +192,11 @@ module.GetFilteredCards = function(id,filter)
 	if filter == nil then
 		return warn("Unable to get cards: Filter(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/cards/"..filter.."?key="..module.key.."&token="..module.token,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting cards: "..err)
-	end
 end
 
 module.GetBoardCustomFields = function(id)
@@ -256,16 +204,11 @@ module.GetBoardCustomFields = function(id)
 		return warn("Unable to get Custom Fields: Board ID(1st param) is nil or is not provided.")
 	end
 
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/customFields?key="..module.key.."&token="..module.token,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting cards: "..err)
-	end
 end
 
 module.GetBoardLabels = function(id,fields,limit)
@@ -277,16 +220,11 @@ module.GetBoardLabels = function(id,fields,limit)
 	if tonumber(limit) < 0 or tonumber(limit) > 1000 then
 		return warn("Unexpected error whilst getting labels: Limit must be in the range of 0 and 100")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/labels?key="..module.key.."&token="..module.token.."&fields="..fields.."&limit="..limit,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting cards: "..err)
-	end
 end
 
 module.CreateLabel = function(id,name,color)
@@ -297,16 +235,11 @@ module.CreateLabel = function(id,name,color)
 		return warn("Unable to create label: Name(2nd param) is nil or is not provided.")
 	end
 	color = color or ""
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/labels".."?key="..module.key.."&token="..module.token.."&name="..name.."&color="..color,
 			Method = "POST"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst creating label: "..err)
-	end
 end
 
 module.GetBoardLists = function(id,cards,card_fields,filter,fields)
@@ -319,16 +252,11 @@ module.GetBoardLists = function(id,cards,card_fields,filter,fields)
 	filter = filter or "all"
 	fields = fields or "all"
 
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/lists".."?key="..module.key.."&token="..module.token.."&cards="..cards.."&card_fields="..card_fields.."&filter="..filter.."&fields="..fields,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting lists: "..err)
-	end
 
 end
 
@@ -339,16 +267,11 @@ module.CreateBoardList = function(id,name,pos)
 	if name == nil then
 		return warn("Unable to create lists: Name(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/lists".."?key="..module.key.."&token="..module.token.."&name="..name.."&pos="..pos,
 			Method = "POST"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting lists: "..err)
-	end
 end
 
 module.GetFilteredLists = function(id,filter)
@@ -358,34 +281,22 @@ module.GetFilteredLists = function(id,filter)
 	if filter == nil then
 		return warn("Unable to get lists: Filter(2nd param) is nil or is not provided.")
 	end
-
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/lists/"..filter.."?key="..module.key.."&token="..module.token,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting lists: "..err)
-	end
-
 end
 
 module.GetBoardMembers = function(id)
 	if id == nil then
 		return warn("Unable to get members: Board ID(1st param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/members?key="..module.key.."&token="..module.token,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting members: "..err)
-	end
 end
 
 module.InviteMemberToBoardViaEmail = function(id,email,Type,fullName)
@@ -397,18 +308,12 @@ module.InviteMemberToBoardViaEmail = function(id,email,Type,fullName)
 	end
 	Type = Type or "normal"
 	if fullName == nil then
-		local success,err = pcall(function()
 			local response = HttpService:RequestAsync({
 				Url = module.endpoint.."/boards/"..id.."/members?key="..module.key.."&token="..module.token.."&email="..email.."&type="..Type,
 				Method = "PUT"
 			})
 			return HttpService:JSONDecode(response)
-		end)
-		if err then
-			return warn("Unexpected error whilst inviting member: "..err)
-		end
 	else
-		local success,err = pcall(function()
 			local response = HttpService:RequestAsync({
 				Url = module.endpoint.."/boards/"..id.."/members?key="..module.key.."&token="..module.token.."&email="..email.."&type="..Type,
 				Method = "PUT",
@@ -417,10 +322,6 @@ module.InviteMemberToBoardViaEmail = function(id,email,Type,fullName)
 				})
 			})
 			return HttpService:JSONDecode(response)
-		end)
-		if err then
-			return warn("Unexpected error whilst inviting member: "..err)
-		end
 	end
 end
 
@@ -435,16 +336,11 @@ module.AddMemberToBoard = function(id,idMember,Type,allowBillableGuest)
 		return warn("Unable to add member: Type(3rd param) is nil or is not provided.")
 	end
 	allowBillableGuest = allowBillableGuest or "false"
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/members/"..idMember.."?key="..module.key.."&token="..module.token.."&type="..Type.."&allowBillableGuest="..allowBillableGuest,
 			Method = "PUT"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst inviting member: "..err)
-	end
 end
 
 module.RemoveBoardMember = function(id,idMember)
@@ -454,16 +350,11 @@ module.RemoveBoardMember = function(id,idMember)
 	if idMember == nil then
 		return warn("Unable to delete member: Member ID(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/members/"..idMember.."?key="..module.key.."&token="..module.token,
 			Method = "DELETE"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst deleting member: "..err)
-	end
 end
 
 module.UpdateBoardMembersMembership = function(id,idMembership,Type,member_fields)
@@ -477,16 +368,11 @@ module.UpdateBoardMembersMembership = function(id,idMembership,Type,member_field
 		return warn("Unable to Update Membership:  Type(3rd param) is nil or is not provided.")
 	end
 	member_fields = member_fields or "fullName,username"
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/memberships/"..idMembership.."?key="..module.key.."&token="..module.token.."&type="..Type,
 			Method = "PUT"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating membership: "..err)
-	end
 end
 
 module.UpdateEmailPositionPref = function(id,value)
@@ -496,16 +382,11 @@ module.UpdateEmailPositionPref = function(id,value)
 	if value == nil then
 		return warn("Unable to Update Email Position Pref: Value(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/myPrefs/emailPosition".."?key="..module.key.."&token="..module.token.."&value="..value,
 			Method = "PUT"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating Email Position Pref: "..err)
-	end
 end
 
 module.UpdateIdEmailListPref = function(id,value)
@@ -515,16 +396,11 @@ module.UpdateIdEmailListPref = function(id,value)
 	if value == nil then
 		return warn("Unable to Update ID Email List Pref: Value(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/myPrefs/idEmailList".."?key="..module.key.."&token="..module.token.."&value="..value,
 			Method = "PUT"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating ID Email List Pref: "..err)
-	end
 end
 
 module.UpdateShowListGuidePref = function(id,value)
@@ -534,16 +410,11 @@ module.UpdateShowListGuidePref = function(id,value)
 	if value == nil then
 		return warn("Unable to Update Show List Guide Pref: Value(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/myPrefs/showListGuide?key="..module.key.."&token="..module.token.."&value="..value,
 			Method = "PUT"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating Show List Guide Pref: "..err)
-	end
 end
 
 module.UpdateShowSidebarPref = function(id,value)
@@ -553,16 +424,11 @@ module.UpdateShowSidebarPref = function(id,value)
 	if value == nil then
 		return warn("Unable to Update Show Sidebar Pref: Value(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/myPrefs/showSidebar?key="..module.key.."&token="..module.token.."&value="..value,
 			Method = "PUT"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating Show Sidebar Pref: "..err)
-	end
 end
 
 module.UpdateShowSidebarActivityPref = function(id,value)
@@ -572,16 +438,11 @@ module.UpdateShowSidebarActivityPref = function(id,value)
 	if value == nil then
 		return warn("Unable to Update Show Sidebar Activity Pref: Value(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/myPrefs/showSidebarActivity?key="..module.key.."&token="..module.token.."&value="..value,
 			Method = "PUT"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating Show Sidebar Activity Pref: "..err)
-	end
 end
 
 module.UpdateShowSidebarBoardActionsPref = function(id,value)
@@ -591,16 +452,11 @@ module.UpdateShowSidebarBoardActionsPref = function(id,value)
 	if value == nil then
 		return warn("Unable to Update Show Sidebar Board Actions Pref: Value(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/myPrefs/showSidebarBoardActions?key="..module.key.."&token="..module.token.."&value="..value,
 			Method = "PUT"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating Show Sidebar Board Actions Pref: "..err)
-	end
 end
 
 module.UpdateShowSidebarMembersPref = function(id,value)
@@ -610,16 +466,11 @@ module.UpdateShowSidebarMembersPref = function(id,value)
 	if value == nil then
 		return warn("Unable to Update Show Sidebar Members Pref: Value(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/myPrefs/showSidebarMembers?key="..module.key.."&token="..module.token.."&value="..value,
 			Method = "PUT"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating Show Sidebar Members Pref: "..err)
-	end
 end
 
 module.CreateBoard = function(name,defaultLabels,defaultLists,desc,idOrganization,idBoardSource,keepFromSource,powerUps,prefs_permissionLevel,prefs_voting,prefs_comments,prefs_invitations,prefs_selfJoin,prefs_cardCovers,prefs_background,prefs_cardAging)
@@ -641,48 +492,33 @@ module.CreateBoard = function(name,defaultLabels,defaultLists,desc,idOrganizatio
 	prefs_cardCovers = prefs_cardCovers or "true"
 	prefs_background = prefs_background or "blue"
 	prefs_cardAging = prefs_cardAging or "regular"
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards?key="..module.key.."&token="..module.token.."&name="..name.."&defaultLabels="..defaultLabels.."&defaultLists="..defaultLists.."&desc="..desc.."&idOrganization="..idOrganization.."&idBoardSource="..idBoardSource.."&keepFromSource="..keepFromSource.."&powerUps="..powerUps.."&prefs_permissionLevel="..prefs_permissionLevel.."&prefs_voting="..prefs_voting.."&prefs_comments="..prefs_comments.."prefs_invitations="..prefs_invitations.."&prefs_selfJoin="..prefs_selfJoin.."&prefs_cardCovers="..prefs_cardCovers.."&prefs_background="..prefs_background.."&prefs_cardAging="..prefs_cardAging,
 			Method = "POST"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst creating board: "..err)
-	end
 end
 
 module.CreateCalendarKey = function(id)
 	if id == nil then
 		return warn("Unable to create calendar key: Board ID(1st param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/calendarKey/generate?key="..module.key.."&token="..module.token,
 			Method = "POST"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst creating calendar key: "..err)
-	end
 end
 
 module.CreateEmailKey = function(id)
 	if id == nil then
 		return warn("Unable to create emailKey: Board ID(1st param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/emailKey/generate?key="..module.key.."&token="..module.token,
 			Method = "POST"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst creating emailKey: "..err)
-	end
 end
 
 module.CreateTag = function(id,value)
@@ -692,48 +528,33 @@ module.CreateTag = function(id,value)
 	if value == nil then
 		return warn("Unable to create tag: Value(2nd param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/idTags?key="..module.key.."&token="..module.token.."&value="..value,
 			Method = "POST"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst creating tag: "..err)
-	end
 end
 
 module.MarkBoardViewed = function(id)
 	if id == nil then
 		return warn("Unable to mark board viewed: Board ID(1st param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/markedAsViewed?key="..module.key.."&token="..module.token,
 			Method = "POST"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst creating tag: "..err)
-	end
 end
 
 module.GetEnabledPowerUps = function(id)
 	if id == nil then
 		return warn("Unable to get enabled power-ups: Board ID(1st param) is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/boardPlugins?key="..module.key.."&token="..module.token,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting enabled power-ups: "..err)
-	end
 end
 
 module.GetPowerUps = function(id,filter)
@@ -741,16 +562,11 @@ module.GetPowerUps = function(id,filter)
 		return warn("Unable to get power-ups: Board ID(1st param) is nil or is not provided.")
 	end
 	filter = filter or "enabled"
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/boards/"..id.."/plugins?key="..module.key.."&token="..module.token,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting power-ups: "..err)
-	end
 end
 
 module.CreateCard = function(name,idList,desc,pos,due,dueComplete,idMembers,idLabels,urlSource,fileSource,mimeType,idCardSource,keepFromSource,address,locationName,coordinates)
@@ -772,16 +588,11 @@ module.CreateCard = function(name,idList,desc,pos,due,dueComplete,idMembers,idLa
 	address = address or ""
 	locationName = locationName or ""
 	coordinates = coordinates or ""
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/cards?key="..module.key.."&token="..module.token.."&name="..name.."&desc="..desc.."&pos="..pos.."&due="..due.."&dueComplete="..dueComplete.."&idMembers="..idMembers.."&urlSource="..urlSource.."&fileSource="..fileSource.."&mimeType="..mimeType.."&idCardSource="..idCardSource.."&keepFromSource="..keepFromSource.."&address="..address.."&locationName="..locationName.."&coordinates="..coordinates,
 			Method = "POST"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst creating card: "..err)
-	end
 end
 
 module.GetCard = function(id,fields,actions,attachments,attachments_fields,members,member_fields,membersVoted,memberVoted_fields,checkItemStates,checklists,checklist_fields,board,board_fields,list,pluginData,stickers,sticker_fields,customFieldItems)
@@ -806,16 +617,11 @@ module.GetCard = function(id,fields,actions,attachments,attachments_fields,membe
 	stickers = stickers or "false"
 	sticker_fields = sticker_fields or "all"
 	customFieldItems = customFieldItems or "false"
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/cards/"..id.."?key="..module.key.."&token="..module.token.."&id="..id.."&fields="..fields.."&actions="..actions.."&attachments="..attachments.."&attachment_fields="..attachment_fields.."&members="..members.."&member_fields="..member_fields.."&membersVoted="..membersVoted.."&memberVoted_fields="..memberVoted_fields.."&checkItemStates="..checkItemStates.."&checklists="..checklists.."&checklist_fields="..checklist_fields.."&board="..board.."&board_fields="..board_fields.."&list="..list.."&pluginData="..pluginData.."&stickers="..stickers.."&sticker_fields="..sticker_fields.."&customFieldItems="..customFieldItems,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst getting card: "..err)
-	end
 end
 
 module.UpdateCard = function(id,name,desc,closed,idMembers,idAttachmentCover,idList,idLabels,idBoard,pos,due,dueComplete,subscribed,address,locationName,coordinates,cover)
@@ -829,7 +635,7 @@ module.UpdateCard = function(id,name,desc,closed,idMembers,idAttachmentCover,idL
 	idMembers = idMembers or Card.idMembers
 	idAttachmentCover = idAttachmentCover or Card.idAttachmentCover
 	idList = idList or Card.idList
-	idLabels = idLabels or Card.idLabels
+	idLabels = idLabels or Card.idLabe
 	idBoard = idBoard or Card.idBoard
 	pos = pos or Card.pos
 	due = due or Card.due
@@ -839,51 +645,35 @@ module.UpdateCard = function(id,name,desc,closed,idMembers,idAttachmentCover,idL
 	locationName = locationName or Card.locationName
 	coordinates = coordinates or Card.coordinates
 	cover = cover or Card.cover
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
-			Url = module.endpoint.."/cards/"..id.."?key="..module.key.."&token="..module.token.."&id="..id.."&name="..name.."&desc="..desc.."&closed="..closed.."&idMembers="..idMembers.."&idAttachmentCover="..idAttachmentCover.."&idList="..idList.."&idLabels="..idLabels.."&idBoard="..idBoard.."&pos="..pos.."&due="..due.."&dueComplete="..dueComplete.."&subscribed="..subscribed.."&address="..address.."&locationName="..locationName.."&coordinates="..coordinates.."&cover="..cover,
+			Url = module.endpoint.."/cards/"..id.."?key="..module.key.."&token="..module.token.."&id="..id.."&name="..name.."&desc="..desc.."&closed="..closed.."&idMembers="..idMembers.."&idAttachmentCover="..idAttachmentCover.."&idList="..idList.."&idLabels="..idLabels.."&idBoard="..idBoard.."&pos="..pos.."&due="..due.."&dueComplete="..dueComplete.."&subscribed="..subscribed.."&address="..address.."&locationName="..locationName.."&coordinates="..coordinates.."&cover="..HttpService:JSONEncode(cover),
 			Method = "PUT"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst updating card: "..err)
-	end
 end
 
 module.DeleteCard = function(id)
 	if id == nil then
 		return warn("Unable to delete card: Card ID is nil or is not provided.")
 	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
 			Url = module.endpoint.."/cards/"..id.."?key="..module.key.."&token="..module.token,
 			Method = "DELETE"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst deleting card: "..err)
-	end
 end
 
-module.GetCardField = function(id,field)
+--LISTS
+
+module.GetListCards = function(id)
 	if id == nil then
-		return warn("Unable to get card field: Card ID is nil or is not provided.")
+		return warn("Unable to get list card: List ID is nil or is not provided.")
 	end
-	if field == nil then
-		return warn("Unable to get card field: Field is nil or is not provided.")
-	end
-	local success,err = pcall(function()
 		local response = HttpService:RequestAsync({
-			Url = module.endpoint.."/cards/"..id.."/"..field.."?key="..module.key.."&token="..module.token,
+			Url = module.endpoint.."/lists/"..id.."/cards?key="..module.key.."&token="..module.token,
 			Method = "GET"
 		})
 		return HttpService:JSONDecode(response)
-	end)
-	if err then
-		return warn("Unexpected error whilst deleting card: "..err)
-	end
 end
 
 return module
